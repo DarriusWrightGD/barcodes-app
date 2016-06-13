@@ -14,7 +14,8 @@ var Toast = require("nativescript-toast");
 `,
 })
 export class AppComponent implements OnInit {
-
+    scanResult = ""; 
+    
     ngOnInit(){
         barcodescanner.available().then(()=>{
                 barcodescanner.hasCameraPermission().then((granted) =>{
@@ -35,24 +36,15 @@ export class AppComponent implements OnInit {
     public scan(){
         console.log("scanning")
         barcodescanner.scan({
+            formats: "AZTEC,UPC_E,EAN_13,EAN_8,CODE_128,CODE_93,CODE_39,QR_CODE,PDF_417",
             cancelLabel: "Stop scanning", // iOS only, default 'Close' 
-            message: "Go scan something", // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.' 
-            preferFrontCamera: false,     // Android only, default false 
-            showFlipCameraButton: true,   // Android only, default false (on iOS it's always available) 
+            message: "Scan the part", // Android only, default is 'Place a barcode inside the viewfinder rectangle to scan it.' 
             orientation: "landscape"      // Android only, optionally lock the orientation to either "portrait" or "landscape" 
-        }).then(
-            function(result) {
-                console.log("Scan format: " + result.format);
-                console.log("Scan text:   " + result.text);
-                console.log("Scan result: " + result);
-            },
-            function(error) {
-                console.log("No scan: " + error);
-            }
-        )
+        })
+        .then((result)=> this.scanResult = result, (error)=> this.scanResult = error);
     }
 
     public get message(): string {
-        return "Scan message eventually";
+        return JSON.stringify(this.scanResult);
     }
 }
